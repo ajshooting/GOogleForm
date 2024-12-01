@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
@@ -21,6 +23,13 @@ func fetch(url string) (string, error) {
 		return "", err
 	}
 	return doc.Html()
+}
+
+// 構造体を定義
+type DataItem struct {
+	Question string
+	ID       string
+	Answer   string // 回答を格納するフィールドを追加
 }
 
 func main() {
@@ -63,6 +72,22 @@ func main() {
 		}
 	}
 
+	//そもそもqListが取得できてない
 	fmt.Println(qList)
 	fmt.Println(idList)
+
+
+	// 以下、おかしすぎる
+	dataList := make([]DataItem, len(qList))
+	reader := bufio.NewReader(os.Stdin)
+	for i := range qList {
+		dataList[i] = DataItem{Question: qList[i], ID: idList[i]}
+		fmt.Printf("%sに対する回答を入力してください: ", qList[i])
+		answer, _ := reader.ReadString('\n')
+		dataList[i].Answer = strings.TrimSpace(answer)
+	}
+	fmt.Println("収集したデータ:")
+	for _, item := range dataList {
+		fmt.Printf("{%s, %s}\n", item.Answer, item.ID)
+	}
 }
