@@ -33,7 +33,7 @@ type DataItem struct {
 }
 
 func main() {
-	url := "url"
+	url := "https://docs.google.com/forms/d/e/1FAIpQLSfoEtgxNENKW3cK9Nfm-z7RGtEcUbdrrKxuyZkOveDUykgR-w/viewform"
 
 	sendURL := regexp.MustCompile(`viewfor.+`).ReplaceAllString(url, "formResponse")
 	fmt.Println("url : " + sendURL)
@@ -65,29 +65,33 @@ func main() {
 			idList = append(idList, id)
 		}
 
-		qRegex := regexp.MustCompile(`\d+,"(.*?)"`)
-		qMatch := qRegex.FindStringSubmatch(match[1])
-		if len(qMatch) > 1 {
-			qList = append(qList, strings.ReplaceAll(qMatch[1], "\"", ""))
+		qRegex := regexp.MustCompile(`&#34;(.*?)&#34;`)
+		qMatch := qRegex.FindString(match[1])
+		if qMatch != "" {
+			qList = append(qList, strings.ReplaceAll(qMatch, "&#34;", ""))
 		}
 	}
 
-	//そもそもqListが取得できてない
-	fmt.Println(qList)
 	fmt.Println(idList)
-
+	fmt.Println(qList)
 
 	// 以下、おかしすぎる
 	dataList := make([]DataItem, len(qList))
 	reader := bufio.NewReader(os.Stdin)
 	for i := range qList {
 		dataList[i] = DataItem{Question: qList[i], ID: idList[i]}
-		fmt.Printf("%sに対する回答を入力してください: ", qList[i])
+		fmt.Printf("'%s' : ", qList[i])
 		answer, _ := reader.ReadString('\n')
 		dataList[i].Answer = strings.TrimSpace(answer)
 	}
-	fmt.Println("収集したデータ:")
+
+	var payload [][]string
+
 	for _, item := range dataList {
-		fmt.Printf("{%s, %s}\n", item.Answer, item.ID)
+		payload = append(payload, []string{item.ID, item.Answer})
 	}
+
+	fmt.Println(payload)
+
+	// これをPOSTしてしまえばいいのです。
 }
