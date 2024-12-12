@@ -74,24 +74,5 @@ func main() {
 
 	fmt.Println(idList)
 	fmt.Println(qList)
-
-	// 以下、おかしすぎる
-	dataList := make([]DataItem, len(qList))
-	reader := bufio.NewReader(os.Stdin)
-	for i := range qList {
-		dataList[i] = DataItem{Question: qList[i], ID: idList[i]}
-		fmt.Printf("'%s' : ", qList[i])
-		answer, _ := reader.ReadString('\n')
-		dataList[i].Answer = strings.TrimSpace(answer)
-	}
-
-	var payload [][]string
-
-	for _, item := range dataList {
-		payload = append(payload, []string{item.ID, item.Answer})
-	}
-
-	fmt.Println(payload)
-
 	// これをPOSTしてしまえばいいのです。
 }
