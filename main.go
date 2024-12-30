@@ -74,5 +74,26 @@ func main() {
 
 	fmt.Println(idList)
 	fmt.Println(qList)
-	// これをPOSTしてしまえばいいのです。
+	// これをPOSTしてしまえばいい..?
+	
+	// ユーザーからの入力を受け取る
+	reader := bufio.NewReader(os.Stdin)
+	data := url.Values{}
+	for i, q := range qList {
+		fmt.Printf("%s: ", q)
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		data.Set("entry."+idList[i], input)
+	}
+
+	// POSTリクエストを送信
+	resp, err := http.PostForm(sendURL, data)
+	if err != nil {
+		fmt.Println("Error posting form:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// レスポンスを確認
+	fmt.Println("Response Status:", resp.Status)
 }
