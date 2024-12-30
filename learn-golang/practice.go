@@ -21,28 +21,28 @@ func FizzBuzz() {
 	}
 }
 
-func findMinMax() {
-	numbers := []int{5, 2, 9, 1, 5, 6}
-	Max := 0
-	Min := 9999999999999
-	i := 0
-	for i< len(numbers) {
-		if numbers[i] < i{
-			Max = i
+func findMinMax(numbers []int) (int, int) { // スライスを引数として受け取る
+	if len(numbers) == 0 {
+		return 0, 0 // エラーハンドリング: 空のスライスの場合
+	}
+	min := numbers[0]             // スライスの最初の要素で初期化
+	max := numbers[0]             // スライスの最初の要素で初期化
+	for _, num := range numbers { // rangeを使ってスライスの各要素を反復処理
+		if num < min {
+			min = num
 		}
-		if numbers[i] < i{
-			Min = i
+		if num > max {
+			max = num
 		}
 	}
-	return Max, Min
-} 
+	return min, max
+}
 
-func reverseString(input_str){
-	str := input_str
+func reverseString(input_str string) string {
+	runes := []rune(input_str) // 文字列をruneのスライスに変換
 	reversed_string := ""
-	i := 0
-	for i < len(str) {
-		reversed_string += str[-(i+1)]
+	for i := len(runes) - 1; i >= 0; i-- { // インデックスを逆順に回す
+		reversed_string += string(runes[i]) // runeを文字列に変換して追加
 	}
-	fmt.Println(reversed_string)
+	return reversed_string
 }
